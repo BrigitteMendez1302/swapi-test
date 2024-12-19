@@ -1,0 +1,24 @@
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+
+# undefined directory
+undefined
+
+# Webpack
+.webpack
+
+# Swagger
+swagger
+
+# dynamodb
+.dynamodb
+
+# .esbuild
+.esbuild
+
+# coverage
+coverage

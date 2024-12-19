@@ -1,0 +1,72 @@
+service: starwars-api
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  memorySize: 128
+  timeout: 20
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
+    VEHICLE_TABLE_NAME: Vehicles
+  logs:
+    restApi: true
+    frameworkLambda: true
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:Scan
+        - dynamodb:Query
+      Resource:
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.VEHICLE_TABLE_NAME}"
+    - Effect: Allow
+      Action:
+        - translate:TranslateText
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - logs:CreateLogGroup
+        - logs:CreateLogStream
+        - logs:PutLogEvents
+      Resource: "*"
+
+functions:
+  getPerson:
+    handler: src/people/infrastructure/controllers/GetPersonController.handler
+    events:
+      - http:
+          path: people/{id}
+          method: get
+  createVehicle:
+    handler: src/vehicles/infrastructure/controllers/CreateVehicleController.handler
+    events:
+      - http:
+          path: vehicles
+          method: post
+  getAllVehicles:
+    handler: src/vehicles/infrastructure/controllers/GetVehiclesController.handler
+    events:
+      - http:
+          path: vehicles
+          method: get
+
+
+plugins:
+  - serverless-offline
+  - serverless-esbuild
+
+resources:
+  Resources:
+    VehicleTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Vehicles
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
