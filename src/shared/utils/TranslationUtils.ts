@@ -1,22 +1,12 @@
 import { TranslateClient, TranslateTextCommand } from "@aws-sdk/client-translate";
 
 export class TranslationUtils {
-  private client: TranslateClient;
-  private translationCache: { [key: string]: string } = {}; // Caché para traducciones
+  private static client = new TranslateClient({ region: "us-east-1" });
 
-  constructor() {
-    this.client = new TranslateClient({ region: "us-east-1" });
-  }
-
-  async translateKeys(data: any): Promise<any> {
-    const translatedData: any = {};
+  static async translateKeys(data: Record<string, any>): Promise<Record<string, any>> {
+    const translatedData: Record<string, any> = {};
 
     for (const key in data) {
-      if (!key) {
-        console.warn("Skipping null or undefined key");
-        continue;
-      }
-
       const translatedKey = await this.translateKey(key);
       translatedData[translatedKey] = data[key];
     }
@@ -24,27 +14,23 @@ export class TranslationUtils {
     return translatedData;
   }
 
-  private async translateKey(key: string, sourceLang: string = "en", targetLang: string = "es"): Promise<string> {
-    if (this.translationCache[key]) {
-      return this.translationCache[key];
-    }
-
+  static async translateKey(
+    text: string,
+    sourceLang: string = "en",
+    targetLang: string = "es"
+  ): Promise<string> {
     const command = new TranslateTextCommand({
-      Text: key,
+      Text: text,
       SourceLanguageCode: sourceLang,
       TargetLanguageCode: targetLang,
     });
 
     try {
       const response = await this.client.send(command);
-
-      const translatedText = response.TranslatedText || key;
-      this.translationCache[key] = translatedText;
-
-      return translatedText;
+      return response.TranslatedText || text;
     } catch (error) {
-      console.error(`Error translating key "${key}":`, error);
-      return key; // Si hay un error, retorna la clave original
+      console.error(`Error translating text "${text}":`, error);
+      return text;
     }
   }
 }

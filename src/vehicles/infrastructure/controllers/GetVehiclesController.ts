@@ -1,4 +1,3 @@
-import { APIGatewayEvent } from "aws-lambda";
 import { VehicleService } from "../../application/VehicleService";
 import { VehicleRepository } from "../repositories/VehicleRepository";
 import { ResponseHandler } from "../../../shared/utils/ResponseHandler";
@@ -6,7 +5,7 @@ import { ResponseHandler } from "../../../shared/utils/ResponseHandler";
 const repository = new VehicleRepository();
 const vehicleService = new VehicleService(repository);
 
-export const handler = async (event: APIGatewayEvent) => {
+export const handler = async () => {
   try {
     const vehicles = await vehicleService.getAllVehicles();
 

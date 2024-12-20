@@ -13,7 +13,7 @@ export const handler = async (event: APIGatewayEvent) => {
     const { vehicle_class, model, name, passengers, cost_in_credits, crew } = body;
 
     if (!vehicle_class || !model || !name || !passengers || !cost_in_credits || !crew) {
-      return new ResponseError(400, "All fields are required");
+      return ResponseHandler.error(new ResponseError(400, "All fields are required"));
     }
 
     const vehicle = await vehicleService.createVehicle({
