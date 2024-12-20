@@ -1,0 +1,143 @@
+documentation:
+  title: API Indra Test
+  version: 1.0.0
+  description: API de prueba para Indra
+  servers:
+      - url: https://fr3zgtspui.execute-api.us-east-1.amazonaws.com/dev
+  tags:
+      - name: Personas
+        description: Operaciones relacionadas con la gestión de personas.
+      - name: Vehículos
+        description: Operaciones relacionadas con la gestión de vehículos.
+  models:
+    - name: PersonModel
+      description: Modelo de una persona
+      schema:
+        type: object
+        properties:
+          birth_year:
+            type: string
+            example: "19BBY"
+          eye_color:
+            type: string
+            example: "blue"
+          films:
+            type: array
+            items:
+              type: string
+            example:
+              - "https://swapi.py4e.com/api/films/1/"
+          gender:
+            type: string
+            example: "male"
+          hair_color:
+            type: string
+            example: "blond"
+          height:
+            type: string
+            example: "172"
+          homeworld:
+            type: string
+            example: "https://swapi.py4e.com/api/planets/1/"
+          mass:
+            type: string
+            example: "77"
+          name:
+            type: string
+            example: "Luke Skywalker"
+          skin_color:
+            type: string
+            example: "fair"
+          created:
+            type: string
+            format: date-time
+            example: "2014-12-09T13:50:51.644000Z"
+          edited:
+            type: string
+            format: date-time
+            example: "2014-12-20T21:17:56.891000Z"
+          species:
+            type: array
+            items:
+              type: string
+            example:
+              - "https://swapi.py4e.com/api/species/1/"
+          starships:
+            type: array
+            items:
+              type: string
+            example:
+              - "https://swapi.py4e.com/api/starships/12/"
+          url:
+            type: string
+            example: "https://swapi.py4e.com/api/people/1/"
+          vehicles:
+            type: array
+            items:
+              type: string
+            example:
+              - "https://swapi.py4e.com/api/vehicles/14/"
+    - name: VehicleModel
+      description: Modelo de un vehículo
+      schema:
+        type: object
+        properties:
+          id:
+            type: string
+            example: "1234"
+          vehicle_class:
+            type: string
+            example: "wheeled"
+          model:
+            type: string
+            example: "T-16 skyhopper"
+          name:
+            type: string
+            example: "Speeder"
+          passengers:
+            type: string
+            example: "1"
+          cost_in_credits:
+            type: string
+            example: "150000"
+          crew:
+            type: string
+            example: "1"
+          created_at:
+            type: string
+            format: date-time
+            example: "2024-12-20T14:45:00.000Z"
+    - name: "ErrorResponse"
+      description: Respuesta de error
+      schema:
+        type: object
+        properties:
+          message:
+            type: string
+            example: "Internal Server Error"
+          details:
+            type: object
+            nullable: true
+            example: null
+    - name: PersonResponse
+      description: Respuesta al obtener detalles de una persona
+      schema:
+        type: object
+        properties:
+          message:
+            type: string
+            example: "Person retrieved successfully"
+          data:
+            $ref: "#/components/schemas/PersonModel"
+    - name: VehiclesResponse
+      description: Respuesta al obtener todos los vehículos
+      schema:
+        type: object
+        properties:
+          message:
+            type: string
+            example: "Vehicles fetched successfully."
+          data:
+            type: array
+            items:
+              $ref: "#/components/schemas/VehicleModel"

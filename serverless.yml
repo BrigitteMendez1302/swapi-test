@@ -5,7 +5,7 @@ provider:
   runtime: nodejs20.x
   region: us-east-1
   memorySize: 128
-  timeout: 20
+  timeout: 15
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
     VEHICLE_TABLE_NAME: Vehicles
@@ -32,30 +32,94 @@ provider:
         - logs:PutLogEvents
       Resource: "*"
 
+custom:
+  documentation: ${file(config/doc.yml):documentation}
+
 functions:
+
   getPerson:
     handler: src/people/infrastructure/controllers/GetPersonController.handler
     events:
       - http:
           path: people/{id}
           method: get
+          cors: true
+          documentation:
+            summary: Obtener detalles de una persona
+            description: Recupera información detallada de una persona específica basada en su ID.
+            tags:
+              - Personas
+            pathParams:
+              - name: id
+                description: ID único de la persona.
+                schema:
+                  type: string
+            methodResponses:
+              - statusCode: "200"
+                responseModels:
+                  "application/json": PersonResponse
+              - statusCode: "400"
+                responseModels:
+                  "application/json": ErrorResponse
+              - statusCode: "500"
+                responseModels:
+                  "application/json": ErrorResponse
+
+
+  getVehicles:
+    handler: src/vehicles/infrastructure/controllers/GetVehiclesController.handler
+    events:
+      - http:
+          path: vehicles
+          method: get
+          cors: true
+          documentation:
+            summary: Obtener todos los vehículos
+            description: Recupera una lista de todos los vehículos disponibles.
+            tags:
+              - Vehículos
+            methodResponses:
+              - statusCode: "200"
+                responseModels:
+                  "application/json": VehiclesResponse
+              - statusCode: "400"
+                responseModels:
+                  "application/json": ErrorResponse
+              - statusCode: "500"
+                responseModels:
+                  "application/json": ErrorResponse
+
+
   createVehicle:
     handler: src/vehicles/infrastructure/controllers/CreateVehicleController.handler
     events:
       - http:
           path: vehicles
           method: post
-  getAllVehicles:
-    handler: src/vehicles/infrastructure/controllers/GetVehiclesController.handler
-    events:
-      - http:
-          path: vehicles
-          method: get
+          cors: true
+          documentation:
+            summary: Crear un vehículo
+            description: Crea un nuevo vehículo con los datos proporcionados.
+            tags:
+              - Vehículos
+            requestModels:
+              "application/json": VehicleModel
+            methodResponses:
+              - statusCode: "200"
+                responseModels:
+                  "application/json": VehicleModel
+              - statusCode: "400"
+                responseModels:
+                  "application/json": ErrorResponse
+              - statusCode: "500"
+                responseModels:
+                  "application/json": ErrorResponse
 
 
 plugins:
   - serverless-offline
   - serverless-esbuild
+  - serverless-openapi-documenter
 
 resources:
   Resources:
